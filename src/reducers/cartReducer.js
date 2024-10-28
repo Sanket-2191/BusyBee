@@ -9,29 +9,55 @@ const cartSlice = createSlice({
         // Add a product to the cart
         addToCart: (state, action) => {
             const product = action.payload; // Get the product from the action payload
+            // console.log("tring to add to cart....");
 
             // Check if the product is already in the cart
-            const productInCart = state.products.find(p => p.id === product.id);
+            const productInCart = state.products.find(p => p.id === product.id) || null;
+            // console.log("Product received to add or increase quantity", product);
+
             if (!productInCart) {
-                state.products.push(product);
+                state.products.push({ ...product, quantity: 1 });
                 state.totalValue += product.price; // Update the total value
+            } else {
+                productInCart.quantity += 1;
+                state.totalValue += productInCart.price;
             }
+            // console.log("cart State after adding product : ", state.products);
+
+            // return product;
         },
 
         // Remove a product from the cart
         removeFromCart: (state, action) => {
-            const productId = action.payload.id; // Get the product ID from the action payload
+            const { productId, remove } = action.payload; // Get the product ID from the action payload
             const productIndex = state.products.findIndex(p => p.id === productId);
 
+            // console.log("tring to decrease quamtity of productid:", productId, " from cart....");
             if (productIndex !== -1) {
                 // Subtract the product price from the total value
-                state.totalValue -= state.products[productIndex].price;
+                if (remove || state.products[productIndex].quantity <= 1) {
+                    state.totalValue -= state.products[productIndex].price * state.products[productIndex].quantity;
+                    // Remove the product from the cart
+                    state.products.splice(productIndex, 1);
+                } else {
+                    state.totalValue -= state.products[productIndex].price;
 
-                // Remove the product from the cart
-                state.products.splice(productIndex, 1);
+                    // decrease quntity of the product from the cart
+                    state.products[productIndex].quantity -= 1;
+                }
+
             }
+
+            // return productId;
         },
+
+
+
     },
+
+    extraReducers: (builder) => {
+
+    }
 });
 
 // Export the reducer
