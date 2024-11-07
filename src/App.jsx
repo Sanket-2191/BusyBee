@@ -1,4 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import './App.css';
 import Navbar from './pages/Navbar.jsx';
 import { NotFound } from './pages/NotFound.jsx';
@@ -9,21 +12,45 @@ import { Myorders } from './pages/Myorders.jsx';
 import { getProducts, setIsLoading, storeSelector } from './reducers/storeReducer.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { signinSelector } from './reducers/loginReducer.js';
+import Signin from './pages/Signin.jsx';
+import Login from './pages/Login.jsx';
+import ProtectedRoutes from './pages/ProtectedRoutes.jsx';
 
 function App() {
-  const { products, isLoading, error } = useSelector(storeSelector);
+  const { isLoading, error } = useSelector(storeSelector);
   const dispatch = useDispatch();
+  const { loggedIn, users } = useSelector(signinSelector);
+
+  useEffect(() => {
+    if (loggedIn) {
+      toast.success("Login successful!", {
+        autoClose: 2000, // Automatically closes after 2 seconds
+      });
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (users.length) {
+      toast.success("Sign-in successful!", {
+        autoClose: 2000, // Closes after 2 seconds
+      });
+    }
+  }, [users.length]);
 
   useEffect(() => {
     // Only dispatch actions when the component mounts
     dispatch(setIsLoading());
     dispatch(getProducts());
   }, [dispatch]);
+
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Navbar />, // Navbar used at the top level
-
+      element: <>
+        <Navbar />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick />
+      </>, // Navbar used at the top level
       errorElement: <NotFound />, // Custom error page for invalid routes
       children: [
         {
@@ -36,11 +63,19 @@ function App() {
         },
         {
           path: 'cart',
-          element: <Cart />, // Cart page
+          element: <ProtectedRoutes> <Cart /></ProtectedRoutes>, // Cart page
         },
         {
           path: 'myorders',
-          element: <Myorders />, // Checkout page
+          element: <ProtectedRoutes>  <Myorders /> </ProtectedRoutes>, // Checkout page
+        },
+        {
+          path: 'signin',
+          element: <Signin />
+        },
+        {
+          path: 'login',
+          element: <Login />
         }
       ]
     }
@@ -51,6 +86,7 @@ function App() {
 
   return (
     <>
+
       <RouterProvider router={router} />
     </>
   );

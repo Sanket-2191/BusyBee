@@ -3,12 +3,14 @@ import { cartSelector } from "../reducers/cartReducer";
 import { useLocation, NavLink, Link, Outlet } from "react-router-dom";
 import { useState } from "react";
 import { filterProducts } from "../reducers/storeReducer";
+import { signinSelector } from "../reducers/loginReducer";
 
 const Navbar = () => {
     const { products, totalValue } = useSelector(cartSelector);
     const dispatch = useDispatch()
     const location = useLocation();
     const [searchField, setSearchField] = useState('');
+    const { loggedIn } = useSelector(signinSelector);
 
     const handleSearch = (e) => {
 
@@ -16,7 +18,7 @@ const Navbar = () => {
         setSearchField(searchValue);
         dispatch(filterProducts(searchValue)); // Dispatch filter action
 
-        console.log(" search feild in nav bar:", searchValue);
+        // console.log(" search feild in nav bar:", searchValue);
     };
 
     return (
@@ -40,13 +42,17 @@ const Navbar = () => {
                                 fillRule="evenodd"
                                 d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
                                 clipRule="evenodd" />
-
                         </svg>
                     </label>
                 </div>
                 <div className="flex-none">
                     {/* Conditionally hide dropdown if the current route is '/cart' */}
-
+                    <NavLink
+                        to="/myorders"
+                        className={({ isActive }) => `btn ${isActive ? 'btn-success' : 'btn-primary'} , mx-4`}
+                    >
+                        My Orders
+                    </NavLink>
                     <NavLink
                         to="/store"
                         className={({ isActive }) => `btn ${isActive ? 'btn-success' : 'btn-primary'} , mx-4`}
@@ -105,8 +111,8 @@ const Navbar = () => {
                                     <span className="badge">New</span>
                                 </a>
                             </li>
-                            <li><a>Settings</a></li>
-                            <li><a>Logout</a></li>
+                            {!loggedIn && <li><Link to='/signin'>Sign up</Link></li>}
+                            {loggedIn ? <li><Link to='/login'>Logout</Link></li> : <li><Link to='/login'>login</Link></li>}
                         </ul>
                     </div>
                 </div>

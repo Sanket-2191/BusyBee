@@ -86,6 +86,9 @@ const storeSlice = createSlice({
                 }
 
             })
+            .addCase('cart/emptyCart', (state, action) => {
+                state.products.map(product => (product.addedToCart = false));
+            })
     },
 });
 

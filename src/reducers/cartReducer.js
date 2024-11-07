@@ -9,7 +9,7 @@ const cartSlice = createSlice({
         // Add a product to the cart
         addToCart: (state, action) => {
             const product = action.payload; // Get the product from the action payload
-            // console.log("tring to add to cart....");
+            console.log("tring to add to cart....");
 
             // Check if the product is already in the cart
             const productInCart = state.products.find(p => p.id === product.id) || null;
@@ -22,7 +22,8 @@ const cartSlice = createSlice({
                 productInCart.quantity += 1;
                 state.totalValue += productInCart.price;
             }
-            // console.log("cart State after adding product : ", state.products);
+            // const cartProd = state.products.map(p => p)
+            console.log("cart State after adding product : ", JSON.parse(JSON.stringify(state.products)));
 
             // return product;
         },
@@ -50,13 +51,20 @@ const cartSlice = createSlice({
 
             // return productId;
         },
+        emptyCart: (state) => {
+            state.products = [];
+            state.totalValue = 0;
+        }
 
 
 
     },
 
     extraReducers: (builder) => {
+        builder.
+            addCase('cart/emptyCart', (state, action) => {
 
+            })
     }
 });
 
@@ -64,6 +72,6 @@ const cartSlice = createSlice({
 export const cartReducer = cartSlice.reducer;
 
 // Export actions to use them in components
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, emptyCart } = cartSlice.actions;
 
 export const cartSelector = (state) => state.cart;

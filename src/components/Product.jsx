@@ -12,7 +12,7 @@ export const Product = ({ product, fromCart }) => {
     if (!product) return <p>Product not found</p>; // Handle case where product is not found
 
     return (
-        <div className="card card-compact bg-slate-600 w-60 shadow-xl m-2">
+        <div className="card card-compact bg-slate-600 w-[25%] shadow-xl m-2">
             <figure>
                 <img
                     src={product.image || 'fallback-image-url.jpg'} // Fallback for missing image
@@ -43,7 +43,8 @@ export const Product = ({ product, fromCart }) => {
                                 onClick={() => dispatch(removeFromCart({ productId: product.id, remove: true }))}>
                                 Remove from cart
                             </button> :
-                            <button className="btn btn-primary" onClick={() => dispatch(addToCart(product))}>
+                            <button className="btn btn-primary"
+                                onClick={() => dispatch(addToCart(product))}>
                                 Add to cart
                             </button>
 
